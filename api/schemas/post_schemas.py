@@ -14,9 +14,15 @@ class PostInDB(Post):
     published_at: datetime
 
 
-class PostToRemove(BaseModel):
+class PostUID(BaseModel):
     title: str
 
 
 class AvailablePosts(BaseModel):
     posts: List[PostInDB]
+
+
+class VoteInDB(BaseModel):
+    vote_id: int
+    user_id: int
+    post_id: int

@@ -5,23 +5,11 @@ from sqlalchemy.orm import Session
 
 from api import models
 from api.users import security
-from api.schemas import user_schemas, post_schemas
+from api.schemas import user_schemas
 from api.postgresql.db import get_db
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token")
-
-
-async def get_post(
-    db: Session,
-    title: str,
-    user_id: str,
-) -> post_schemas.PostInDB:
-    return db.query(models.Post).filter(
-        models.Post.title == title,
-        models.Post.user_id == user_id
-    ).first()
-
 
 
 async def get_user(
