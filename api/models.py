@@ -8,9 +8,9 @@ class User(Base):
     __tablename__ = 'users'
     
     user_id = Column(Integer, primary_key=True)
-    email = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     description = Column(Text, default="")
@@ -26,7 +26,7 @@ class Post(Base):
     
     post_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
-    title = Column(Integer, nullable=False)
+    title = Column(String, nullable=False)
     content = Column(Text, nullable=False)
     votes_count = Column(Integer, default=0)
     published_at = Column(DateTime, default=datetime.utcnow)

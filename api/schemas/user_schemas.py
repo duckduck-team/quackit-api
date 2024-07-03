@@ -1,15 +1,18 @@
 from pydantic import BaseModel
-from typing import Optional, List, Dict
+from typing import Optional 
 
 
 class User(BaseModel):
     username: str
-    email: str
     password: str
+    email: str
+    description: str
 
 
 class UserInDB(User):
     user_id: int
+    is_active: bool
+    is_verified: bool
 
 
 class Token(BaseModel):
