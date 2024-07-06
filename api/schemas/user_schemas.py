@@ -9,10 +9,13 @@ class User(BaseModel):
     description: str
 
 
-class UserInDB(User):
+class UserInDB(BaseModel):
     user_id: int
     is_active: bool
     is_verified: bool
+    username: str
+    email: str
+    description: str
 
 
 class Token(BaseModel):

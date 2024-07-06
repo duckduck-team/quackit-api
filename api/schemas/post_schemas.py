@@ -15,7 +15,7 @@ class PostInDB(Post):
 
 
 class PostUID(BaseModel):
-    title: str
+    post_id: int
 
 
 class AvailablePosts(BaseModel):

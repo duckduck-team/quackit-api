@@ -21,14 +21,14 @@ router = APIRouter(
     "/create",
     response_model=post_schemas.PostInDB,
     status_code=200,
-    summary="""The endpoint `/create` create a new post for particular user.""",
+    summary="""The endpoint `/create` create a new post for current logged user.""",
 )
 async def create(
-        post: post_schemas.Post,
-        current_user: user_schemas.UserInDB = router.dependencies[USER],
-        db: Session = router.dependencies[SESSION],
+    post: post_schemas.Post,
+    current_user: user_schemas.UserInDB = router.dependencies[USER],
+    db: Session = router.dependencies[SESSION],
 ):
-    db_post: post_schemas.PostInDB = await post_utils.get_post(
+    db_post: post_schemas.PostInDB = await post_utils.create_post(
         db,
         title=post.title,
         user_id=current_user.user_id
@@ -49,43 +49,33 @@ async def create(
     return db_post
 
 
-@router.post(
-    "/remove",
+@router.delete(
+    "/delete",
     response_model=post_schemas.PostInDB,
     status_code=200,
-    summary="""The endpoint `/remove` remove a post for particular user.""",
+    summary="""The endpoint `/delete` remove a post for current logged user.""",
 )
-async def remove(
+async def delete(
     post: post_schemas.PostUID,
     current_user: user_schemas.UserInDB = router.dependencies[USER],
     db: Session = router.dependencies[SESSION],
 ):
-    db_post: post_schemas.PostInDB = await post_utils.get_post(
+    db_post: post_schemas.PostInDB = await post_utils.get_post_to_delete(
         db,
-        title=post.title,
+        post_id=post.post_id,
         user_id=current_user.user_id
     )
     if not db_post:
         raise HTTPException(status_code=400, detail="Post does not exists")
 
+    db_post_votes = db.query(models.PostVote).filter_by(post_id=db_post.post_id).all()
+    for post_vote in db_post_votes:
+        db.delete(post_vote)
 
     db.delete(db_post)
     db.commit()
 
     return db_post
-
-
-@router.get(
-    "/postlist",
-    response_model=post_schemas.AvailablePosts,
-    status_code=200,
-    summary="""The endpoint `/postlist` shows all posts from a particular user.""",
-)
-async def available_posts(
-        user: user_schemas.UserInDB = router.dependencies[USER],
-        db: Session = router.dependencies[SESSION],
-):
-    return {"posts": db.query(models.Post).filter(models.Post.user_id == user.user_id).all()}
 
 
 @router.post(
@@ -99,9 +89,9 @@ async def vote(
     current_user: user_schemas.UserInDB = router.dependencies[USER],
     db: Session = router.dependencies[SESSION],
 ):
-    db_post: post_schemas.PostInDB = await post_utils.get_any_post(
+    db_post: post_schemas.PostInDB = await post_utils.get_one_post(
         db,
-        title=post.title,
+        post_id=post.post_id,
     )
     if not db_post:
         raise HTTPException(status_code=400, detail="Post does not exists")
@@ -121,5 +111,19 @@ async def vote(
         )
         db.add(db_vote)
         db_post.votes_count += 1
+
     db.commit()
     return db_post
+
+
+@router.get(
+    "/postlist_current",
+    response_model=post_schemas.AvailablePosts,
+    status_code=200,
+    summary="""The endpoint `/postlist_current` shows all created posts""",
+)
+async def my_posts(
+    user: user_schemas.UserInDB = router.dependencies[USER],
+    db: Session = router.dependencies[SESSION],
+):
+    return {"posts": db.query(models.Post).filter(models.Post.user_id == user.user_id).all()}

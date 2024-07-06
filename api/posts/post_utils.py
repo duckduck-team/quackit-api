@@ -3,11 +3,10 @@ from api import models
 from api.schemas import post_schemas
 
 
-# depend on user_id
-async def get_post(
+async def create_post(
     db: Session,
     title: str,
-    user_id: str,
+    user_id: int
 ) -> post_schemas.PostInDB:
     return db.query(models.Post).filter(
         models.Post.title == title,
@@ -15,18 +14,28 @@ async def get_post(
     ).first()
 
 
-# do not depend on user_id
-async def get_any_post(
+async def get_post_to_delete(
     db: Session,
-    title: str,
+    post_id: int,
+    user_id: int
 ) -> post_schemas.PostInDB:
-    return db.query(models.Post).filter(models.Post.title == title).first()
+    return db.query(models.Post).filter(
+        models.Post.post_id == post_id,
+        models.Post.user_id == user_id
+    ).first()
+
+
+async def get_one_post(
+    db: Session,
+    post_id: int,
+) -> post_schemas.PostInDB:
+    return db.query(models.Post).filter(models.Post.post_id == post_id).first()
 
 
 async def get_vote(
     db: Session,
-    post_id: str,
-    user_id: str,
+    post_id: int,
+    user_id: int,
 ) -> post_schemas.PostInDB:
     return db.query(models.PostVote).filter(
         models.PostVote.post_id == post_id,

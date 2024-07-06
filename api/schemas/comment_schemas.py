@@ -11,4 +11,3 @@ class CommentInDB(Comment):
     user_id: int
     votes_count: int
     published_at: datetime
-
