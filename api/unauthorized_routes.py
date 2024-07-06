@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 @router.get(
-    "/{post_id}",
+    "/post/{post_id}",
     response_model=post_schemas.PostInDB,
     status_code=200,
     summary="""The endpoint `/{post_id}` shows one post""",
