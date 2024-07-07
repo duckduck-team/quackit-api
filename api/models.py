@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, ForeignKey
 from api.postgresql.db import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship, backref
@@ -60,6 +60,7 @@ class PostVote(Base):
     post_vote_id = Column(Integer, primary_key=True)
     post_id = Column(Integer, ForeignKey("posts.post_id", ondelete="CASCADE"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    value = Column(Integer, nullable=False)
 
     user = relationship("User", back_populates="post_votes")
     post = relationship("Post", back_populates="post_votes")
@@ -71,6 +72,7 @@ class CommentVote(Base):
     comment_vote_id = Column(Integer, primary_key=True)
     comment_id = Column(Integer, ForeignKey("comments.comment_id", ondelete="CASCADE"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    value = Column(Integer, nullable=False)
 
     user = relationship("User", back_populates="comment_votes")
     comment = relationship("Comment", back_populates="comment_votes")

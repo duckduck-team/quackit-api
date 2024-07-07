@@ -21,9 +21,3 @@ class PostUID(BaseModel):
 
 class AvailablePosts(BaseModel):
     posts: List[PostInDB]
-
-
-class VoteInDB(BaseModel):
-    vote_id: int
-    user_id: int
-    post_id: int

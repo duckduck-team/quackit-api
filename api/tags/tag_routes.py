@@ -66,7 +66,7 @@ async def add_or_create_tag(
     "/delete",
     response_model=tag_schemas.TagInDB,
     status_code=200,
-    summary="""The endpoint '/delete' adds a new/existing tag to a post."""
+    summary="""The endpoint '/delete' deletes an existing tag from a post."""
 )
 async def delete(
     tag_delete: tag_schemas.TagUID,
