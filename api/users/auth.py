@@ -19,6 +19,13 @@ async def get_user(
     return db.query(models.User).filter(models.User.username == username).first()
 
 
+async def get_user_profile(
+    db: Session,
+    user_id: int,
+) -> user_schemas.UserInDB:
+    return db.query(models.User).filter(models.User.user_id == user_id).first()
+
+
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),

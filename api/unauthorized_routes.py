@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 from api import models
 from api.posts import post_utils
 from api.tags import tag_utils
-from api.schemas import post_schemas, tag_schemas
+from api.users import auth
+from api.schemas import post_schemas, tag_schemas, user_schemas
 from api.postgresql.db import get_db
 
 
@@ -14,6 +15,21 @@ router = APIRouter(
     tags=["Unauthorized endpoints"],
     dependencies=[Depends(get_db)]
 )
+
+@router.get(
+    "/user/{user_id}",
+    response_model=user_schemas.UserInDB,
+    status_code=200,
+    summary="""The endpoint `/user/{user_id}` shows user's profile""",
+)
+async def user_profile(
+    user_id: int,
+    db: Session = router.dependencies[0],
+) -> user_schemas.UserInDB:
+    db_user: user_schemas.UserInDB = await auth.get_user_profile(db, user_id=user_id)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User does not exist")
+    return db_user
 
 @router.get(
     "/post/{post_id}",
