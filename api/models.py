@@ -90,4 +90,3 @@ class PostTag(Base):
     
     post_id = Column(Integer, ForeignKey("posts.post_id"), primary_key=True)
     tag_id = Column(Integer, ForeignKey("tags.tag_id"), primary_key=True)
-    published_at = Column(DateTime, default=datetime.utcnow)

@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import List
 from datetime import datetime
 
+
 class Post(BaseModel):
     title: str
     content: str

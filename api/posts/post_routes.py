@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from api import models
 from api.users import auth
 from api.posts import post_utils
-from api.schemas import post_schemas, user_schemas
+from api.schemas import post_schemas, user_schemas, tag_schemas
 from api.postgresql.db import get_db
 
 USER = 0
@@ -36,7 +36,6 @@ async def create(
     if db_post:
         raise HTTPException(status_code=400, detail=f"Post already created")
 
-
     db_post = models.Post(
         user_id=current_user.user_id,
         title=post.title,
@@ -60,17 +59,23 @@ async def delete(
     current_user: user_schemas.UserInDB = router.dependencies[USER],
     db: Session = router.dependencies[SESSION],
 ):
-    db_post: post_schemas.PostInDB = await post_utils.get_post_to_delete(
+    db_post: post_schemas.PostInDB = await post_utils.get_one_post(
         db,
-        post_id=post.post_id,
-        user_id=current_user.user_id
+        post_id=post.post_id
     )
     if not db_post:
         raise HTTPException(status_code=400, detail="Post does not exists")
+    
+    if db_post.user_id != current_user.user_id:
+        raise HTTPException(status_code=401, detail="You can delete only your own posts")
 
-    db_post_votes = db.query(models.PostVote).filter_by(post_id=db_post.post_id).all()
+    db_post_votes: post_schemas.VoteInDB = await post_utils.get_votes(db, post_id=db_post.post_id)
     for post_vote in db_post_votes:
         db.delete(post_vote)
+
+    db_post_tags: tag_schemas.PostTag = await post_utils.get_tags(db, post_id=db_post.post_id)
+    for post_tag in db_post_tags:
+        db.delete(post_tag)
 
     db.delete(db_post)
     db.commit()

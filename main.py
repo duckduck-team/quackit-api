@@ -5,8 +5,10 @@ from api.postgresql.db import engine
 
 from api.users.auth_routes import router as auth_router
 from api.posts.post_routes import router as posts_router
+from api.tags.tag_routes import router as tags_router
 # from api.comments.comment_routes import router as comment_router
 from api.unauthorized_routes import router as unauthorized_router
+
 
 app = FastAPI(
     title="API"
@@ -17,6 +19,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app.include_router(auth_router)
 app.include_router(posts_router)
+app.include_router(tags_router)
 # app.include_router(comment_router)
 app.include_router(unauthorized_router)
 
