@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 from api import models
 from api.postgresql.db import engine
+from fastapi.middleware.cors import CORSMiddleware
 
 from api.users.auth_routes import router as auth_router
 from api.posts.post_routes import router as posts_router
@@ -12,6 +13,16 @@ from api.unauthorized_routes import router as unauthorized_router
 
 app = FastAPI(
     title="API"
+)
+origins = [
+    "http://localhost:3000"
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
 models.Base.metadata.create_all(bind=engine)
