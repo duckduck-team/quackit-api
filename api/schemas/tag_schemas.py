@@ -20,5 +20,9 @@ class PostTag(BaseModel):
     post_id: int
 
 
+class AvailavblePostTags(BaseModel):
+    post_tags: List[PostTag]
+
+
 class AvailavbleTags(BaseModel):
     tags: List[TagInDB]

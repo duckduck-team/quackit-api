@@ -85,16 +85,22 @@ async def all_comments(
 
 @router.get(
     "/tag/{tag_title}",
-    response_model=tag_schemas.TagInDB,
+    response_model=post_schemas.AvailablePosts,
     status_code=200,
-    summary="""The endpoint `/tag/{tag_title}` shows one tag""",
+    summary="""The endpoint `/tag/{tag_title}` shows all posts according to the tag""",
 )
-async def one_tag(
+async def posts_by_tag(
     tag_title: str,
     db: Session = router.dependencies[0],
-) -> tag_schemas.TagInDB:
+) -> post_schemas.AvailablePosts:
     db_tag: tag_schemas.TagInDB = await tag_utils.get_one_tag(db, tag=tag_title)
     if not db_tag:
         raise HTTPException(status_code=404, detail="Tag does not exist")
-    return db_tag
+    db_post_tags = db.query(models.PostTag).filter(models.PostTag.tag_id == db_tag.tag_id).all()
+
+    post_ids = [post_tag.post_id for post_tag in db_post_tags]
+
+    posts = db.query(models.Post).filter(models.Post.post_id.in_(post_ids)).all()
+
+    return {"posts": posts}
 
