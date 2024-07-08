@@ -6,7 +6,7 @@ from api import models
 from api.posts import post_utils
 from api.tags import tag_utils
 from api.users import auth
-from api.schemas import post_schemas, tag_schemas, user_schemas
+from api.schemas import post_schemas, tag_schemas, user_schemas, comment_schemas
 from api.postgresql.db import get_db
 
 
@@ -68,6 +68,20 @@ async def all_tags(
     db: Session = router.dependencies[0],
 ) -> tag_schemas.AvailavbleTags:
     return {"tags": db.query(models.Tag).all()}
+
+
+@router.get(
+    "/post/{post_id}/all_comments",
+    response_model=comment_schemas.AvailableComments,
+    status_code=200,
+    summary="""The endpoint `/post/{post_id}/all_comments` shows all comments for particular post""",
+)
+async def all_comments(
+    post_id: int,
+    db: Session = router.dependencies[0],
+) -> comment_schemas.AvailableComments:
+    return {"comments": db.query(models.Comment).filter(models.Comment.post_id == post_id).all()}
+
 
 @router.get(
     "/tag/{tag_title}",

@@ -19,13 +19,3 @@ async def get_one_post(
     post_id: int,
 ) -> post_schemas.PostInDB:
     return db.query(models.Post).filter(models.Post.post_id == post_id).first()
-
-
-async def get_tags(
-    db: Session,
-    post_id: int,
-) -> tag_schemas.PostTag:
-    return db.query(models.PostTag).filter(
-        models.PostTag.post_id == post_id,
-    ).all()
-

@@ -6,7 +6,9 @@ from api import models
 from api.users import auth
 from api.posts import post_utils
 from api.votes import vote_utils
-from api.schemas import post_schemas, user_schemas, tag_schemas, vote_schemas
+from api.tags import tag_utils
+from api.comments import comment_utils
+from api.schemas import post_schemas, user_schemas, tag_schemas, vote_schemas, comment_schemas
 from api.postgresql.db import get_db
 
 USER = 0
@@ -69,14 +71,12 @@ async def delete(
     
     if db_post.user_id != current_user.user_id:
         raise HTTPException(status_code=401, detail="You can delete only your own posts")
+    
+    await comment_utils.delete_comets_from_post(db, db_post.post_id)
 
-    db_post_votes: vote_schemas.PostVoteInDB = await vote_utils.get_votes(db, post_id=db_post.post_id)
-    for post_vote in db_post_votes:
-        db.delete(post_vote)
+    await vote_utils.delete_comets_from_post(db, post_id=db_post.post_id)
 
-    db_post_tags: tag_schemas.PostTag = await post_utils.get_tags(db, post_id=db_post.post_id)
-    for post_tag in db_post_tags:
-        db.delete(post_tag)
+    await tag_utils.delete_comets_from_post(db, post_id=db_post.post_id)
 
     db.delete(db_post)
     db.commit()
