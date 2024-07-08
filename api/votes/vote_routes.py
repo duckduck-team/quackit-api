@@ -20,12 +20,12 @@ router = APIRouter(
 
 
 @router.post(
-    "/vote_for",
+    "/vote_for_post",
     response_model=post_schemas.PostInDB,
     status_code=200,
-    summary="""The endpoint `/vote_for` allows particular user to vote for some post.""",
+    summary="""The endpoint `/vote_for_post` allows particular user to vote for some post.""",
 )
-async def vote_for(
+async def vote_for_post(
     vote: vote_schemas.PostVote,
     current_user: user_schemas.UserInDB = router.dependencies[USER],
     db: Session = router.dependencies[SESSION],
@@ -63,12 +63,12 @@ async def vote_for(
 
 
 @router.post(
-    "/vote_against",
+    "/vote_against_post",
     response_model=post_schemas.PostInDB,
     status_code=200,
-    summary="""The endpoint `/vote_against` allows particular user to vote against some post.""",
+    summary="""The endpoint `/vote_against_post` allows particular user to vote against some post.""",
 )
-async def vote_against(
+async def vote_against_post(
     vote: vote_schemas.PostVote,
     current_user: user_schemas.UserInDB = router.dependencies[USER],
     db: Session = router.dependencies[SESSION],
