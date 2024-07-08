@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from api import models
 from api.users import auth
 from api.posts import post_utils
+from api.votes import vote_utils
 from api.schemas import post_schemas, user_schemas, tag_schemas, vote_schemas
 from api.postgresql.db import get_db
 
@@ -69,7 +70,7 @@ async def delete(
     if db_post.user_id != current_user.user_id:
         raise HTTPException(status_code=401, detail="You can delete only your own posts")
 
-    db_post_votes: post_schemas.VoteInDB = await post_utils.get_votes(db, post_id=db_post.post_id)
+    db_post_votes: vote_schemas.PostVoteInDB = await vote_utils.get_votes(db, post_id=db_post.post_id)
     for post_vote in db_post_votes:
         db.delete(post_vote)
 
