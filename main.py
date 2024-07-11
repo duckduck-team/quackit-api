@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
 from api import models
+from api.settings import settings
 from api.postgresql.db import engine
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -37,4 +38,4 @@ app.include_router(comment_router)
 app.include_router(unauthorized_router)
 
 if __name__ == "__main__":
-    uvicorn.run(app=app, host="0.0.0.0", port=8000)
+    uvicorn.run(app=app, host=settings.API_HOST, port=int(settings.API_PORT))

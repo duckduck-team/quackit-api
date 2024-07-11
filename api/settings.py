@@ -9,6 +9,8 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 
 class Settings:
+    API_HOST: str = os.getenv("API_HOST", "0.0.0.0")
+    API_PORT: str = os.getenv("API_PORT", 8000)
     DB_NAME: str = os.getenv("DB_NAME")
     DB_USER: str = os.getenv("DB_USER", "postgres")
     DB_HOST: str = os.getenv("DB_HOST", "db")
