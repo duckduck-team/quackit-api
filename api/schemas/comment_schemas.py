@@ -14,6 +14,7 @@ class Comment(BaseModel):
 
 class CommentInDB(Comment):
     user_id: int
+    comment_id: int
     votes_count: int
     published_at: datetime
 
